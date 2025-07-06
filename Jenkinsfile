@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE     = 'vacaerror/app-python'
-        DOCKER_TAG       = 'v2.0'
+        DOCKER_TAG       = 'latest'
         CONTAINER_NAME   = 'app-python'
         DOCKER_NETWORK   = 'app-python-network'
         HOST_PORT        = '5000'
