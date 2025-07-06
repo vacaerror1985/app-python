@@ -12,50 +12,50 @@ pipeline {
 
    
     stages {
-        stage('🔨 Build') {
+        stage(' Build') {
             steps {
                 echo '\u001B[34mCompilando la aplicación...\u001B[0m'
             }
         }
 
-        stage('🧪 Browser Tests') {
+        stage(' Browser Tests') {
             parallel {
                 stage('Chrome') {
                     steps {
-                        echo '✅ Test en Chrome completado'
+                        echo 'Test en Chrome completado'
                     }
                 }
                 stage('Firefox') {
                     steps {
-                        echo '✅ Test en Firefox completado'
+                        echo 'Test en Firefox completado'
                     }
                 }
                 stage('Internet Explorer') {
                     steps {
-                        echo '✅ Test en Internet Explorer completado'
+                        echo 'Test en Internet Explorer completado'
                     }
                 }
                 stage('Safari') {
                     steps {
-                        echo '✅ Test en Safari completado'
+                        echo 'Test en Safari completado'
                     }
                 }
             }
         }
 
-        stage('🔍 Static Analysis') {
+        stage(' Static Analysis') {
             steps {
-                echo '🧠 Ejecutando análisis estático del código (simulado)'
+                echo ' Ejecutando análisis estático del código (simulado)'
             }
         }
 
-        stage('🐳 Docker Deploy') {
+        stage('Docker Deploy') {
             steps {
                 script {
                     echo '🔧 Creando red si no existe...'
                     bat 'docker network inspect %DOCKER_NETWORK% >nul 2>&1 || docker network create %DOCKER_NETWORK%'
 
-                    echo '🧼 Limpiando contenedor anterior...'
+                    echo 'Limpiando contenedor anterior...'
                     bat '''
                         docker container inspect %CONTAINER_NAME% >nul 2>&1 && (
                             docker container stop %CONTAINER_NAME%
@@ -63,10 +63,10 @@ pipeline {
                         ) || echo "Contenedor no existente"
                     '''
 
-                    echo '⬇️ Descargando imagen desde Docker Hub...'
+                    echo '⬇Descargando imagen desde Docker Hub...'
                     bat 'docker pull %DOCKER_IMAGE%:%DOCKER_TAG%'
 
-                    echo '🚀 Ejecutando contenedor...'
+                    echo ' Ejecutando contenedor...'
                     bat '''
                         docker run -d --name %CONTAINER_NAME% ^
                             --network %DOCKER_NETWORK% ^
@@ -80,7 +80,7 @@ pipeline {
 
     post {
         always {
-            echo '✅ Pipeline finalizado.'
+            echo ' Pipeline finalizado.'
         }
     }
 }
