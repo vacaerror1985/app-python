@@ -21,12 +21,20 @@ pipeline {
         stage('Detener y eliminar contenedor si existe') {
             steps {
                 echo '🧹 Limpiando contenedor anterior si existe...'
-                bat '''
-                    docker container inspect %CONTAINER_NAME% >nul 2>&1 && (
-                        docker container stop %CONTAINER_NAME%
-                        docker container rm %CONTAINER_NAME%
-                    ) || echo "No existe el contenedor '%CONTAINER_NAME%'."
-                '''
+                script {
+                    def result = bat(
+                        script: '''
+                            docker container inspect %CONTAINER_NAME% >nul 2>&1 && (
+                                docker container stop %CONTAINER_NAME%
+                                docker container rm %CONTAINER_NAME%
+                            ) || echo "No existe el contenedor '%CONTAINER_NAME%'."
+                        ''',
+                        returnStatus: true
+                    )
+                    if (result != 0) {
+                        echo "⚠️ Contenedor no existía, nada que limpiar."
+                    }
+                }
             }
         }
 
@@ -47,6 +55,9 @@ pipeline {
     post {
         always {
             echo '✅ Pipeline completado.'
+        }
+        failure {
+            echo '❌ Algo salió mal durante la ejecución del pipeline.'
         }
     }
 }
