@@ -10,10 +10,7 @@ pipeline {
         CONTAINER_PORT   = '5000'
     }
 
-    options {
-        ansiColor('xterm') // permite colores si usas el plugin AnsiColor
-    }
-
+   
     stages {
         stage('🔨 Build') {
             steps {
