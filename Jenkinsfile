@@ -2,23 +2,18 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'vacaerror/api-monedastt'
-        CONTAINER_NAME = 'api-monedastt'
-        DOCKER_NETWORK = 'apimonedas_red'
-        HOST_PORT = '9090'
-        CONTAINER_PORT = '8080'
+        DOCKER_IMAGE = 'vacaerror/app-python'
+        DOCKER_TAG = 'latest'
+        CONTAINER_NAME = 'app-python'
+        DOCKER_NETWORK = 'app-python-network'
+        HOST_PORT = '5000'
+        CONTAINER_PORT = '5000'
     }
 
     stages {
-     stage('Construir imagen Docker') {
-            steps {
-                echo '🐳 Construyendo imagen Docker en raíz del proyecto...'
-                bat "docker build -t ${IMAGE_NAME}:${DOCKER_TAG} -f Dockerfile ."
-            }
-        }
-
         stage('Limpiar contenedor existente') {
             steps {
+                echo '🧹 Verificando contenedor anterior...'
                 script {
                     catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                         bat """
@@ -32,10 +27,18 @@ pipeline {
             }
         }
 
-        stage('Desplegar contenedor') {
+        stage('Desplegar desde Docker Hub') {
             steps {
-                bat "docker run --network ${DOCKER_NETWORK} --name ${CONTAINER_NAME} -p ${HOST_PORT}:${CONTAINER_PORT} -d ${DOCKER_IMAGE}"
+                echo "🐳 Descargando y ejecutando contenedor desde Docker Hub..."
+                bat "docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                bat "docker run --network ${DOCKER_NETWORK} --name ${CONTAINER_NAME} -p ${HOST_PORT}:${CONTAINER_PORT} -d ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
+        }
+    }
+
+    post {
+        always {
+            echo '✅ Pipeline finalizado.'
         }
     }
 }
